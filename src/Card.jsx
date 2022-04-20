@@ -5,20 +5,13 @@ import Animal from './Animal';
 
 
 
-export default function Card({ animal, uncovered}){
-    Card.propTypes = {
-        uncovered: PropTypes.bool.isRequired,
-        animal: PropTypes.object.isRequired,
-    };
-
-    const elephant = new Animal(
-        'Elefant', 'placeholder.png', 3.3, 6000, 70, 1, 40,
-    );
-
+export default function Card({
+    animal, uncovered, onSelectedProperty, selectedProperty,
+}){
     const front = (
         <div className="card">
             <h1>{animal.name ? animal.name : 'Unbekannt'}</h1>
-            {elephant.image && (
+            {animal.image && (
             <img  alt={animal.name} height="200" width="200" 
             src={`${process.env.PUBLIC_URL}/${animal.image}`}/>
             )}
@@ -28,12 +21,13 @@ export default function Card({ animal, uncovered}){
                     {Object.keys(Animal.properties).map(property => {
                         const animalProperty = Animal.properties[property];
                         return (
-                            <tr key={property}>
+                            <tr key={property}
+                            className={selectedProperty === property ? 'active' : ''}
+                            onClick={ () => { onSelectedProperty(property) }}
+                            >
+                                
                                 <td>{animalProperty.label}</td>
-                                <td>
-                                    {animal[property]}&nbsp;
-                                    {animalProperty.unit}
-                                </td>
+                                <td>{animal[property]}&nbsp;{animalProperty.unit}</td>
                             </tr>
                         );
                     })}
@@ -48,3 +42,10 @@ export default function Card({ animal, uncovered}){
         return back;
     }
 }
+
+Card.propTypes = {
+    uncovered: PropTypes.bool.isRequired,
+    animal: PropTypes.instanceOf(Animal).isRequired,
+    onSelectedProperty: PropTypes.func,
+    selectedProperty: PropTypes.string,
+};
